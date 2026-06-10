@@ -1,0 +1,108 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { categories, getCategory, getItem } from "@/data/recommendations";
+
+export function getStaticPaths() {
+  return categories.flatMap((category) =>
+    category.items.map((item) => ({
+      params: { category: category.slug, item: item.slug },
+    })),
+  );
+}
+
+const category = getCategory(Astro.params.category ?? "");
+const item = getItem(Astro.params.category ?? "", Astro.params.item ?? "");
+
+if (!category || !item) {
+  return Astro.redirect("/");
+}
+
+const topPick = item.topPick;
+const considerationIcons = ["rule", "tune", "view_in_ar", "settings", "construction"];
+---
+
+<BaseLayout
+  title={`${item.name} Recommendation | Kimu.rec`}
+  description={`The most recommended ${item.name.toLowerCase()} pick on Kimu.rec.`}
+>
+  <div class="page">
+    <div class="breadcrumb">
+      <a href="/">Home</a>
+      <span>/</span>
+      <a href={`/category/${category.slug}`}>{category.name}</a>
+      <span>/</span>
+      <span>{item.name}</span>
+    </div>
+
+    <section aria-labelledby="item-title">
+      <p class="eyebrow">Most recommended</p>
+      <h1 id="item-title">{item.name}</h1>
+      <span class="jp-subtitle">{item.jaName}</span>
+      <p class="lede">{item.description}</p>
+    </section>
+
+    {
+      item.considerations.length > 0 && (
+        <section class="section" aria-labelledby="considerations-title">
+          <h2 id="considerations-title">Things to consider</h2>
+          <span class="jp-subtitle">検討ポイント</span>
+          <ul class="note-list">
+            {item.considerations.map((consideration, index) => (
+              <li>
+                <span class="material-symbols-outlined" aria-hidden="true">
+                  {considerationIcons[index % considerationIcons.length]}
+                </span>
+                <span>{consideration}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {item.considerations.length > 0 && <div class="divider-stack" aria-hidden="true"></div>}
+
+    <section class="section recommendation" aria-labelledby="top-pick-title">
+      <div class="recommendation-media">
+        <img src={topPick.image} alt={`${topPick.brand} ${topPick.name}`} />
+      </div>
+      <div>
+        <p class="eyebrow">Top pick</p>
+        <h2 id="top-pick-title">{topPick.brand} {topPick.name}</h2>
+        <span class="jp-subtitle">{topPick.brand} {topPick.jaName}</span>
+        <p class="muted">{topPick.why}</p>
+        <div class="action-row">
+          <a class="button" href={topPick.url} target="_blank" rel="noreferrer">
+            <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>
+            View recommendation
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {
+      item.alternatives.length > 0 && (
+        <section class="section" aria-labelledby="alternatives-title">
+          <h2 id="alternatives-title">Also worth considering</h2>
+          <span class="jp-subtitle">他の候補</span>
+          <div class="grid product-grid">
+            {item.alternatives.map((product) => (
+              <a class="card product-card" href={product.url} target="_blank" rel="noreferrer">
+                <div class="card-media product-card-media">
+                  <img src={product.image} alt={`${product.brand} ${product.name}`} />
+                </div>
+                <div class="card-copy">
+                  <h3>
+                    {product.brand} {product.name}
+                  </h3>
+                  <span class="jp-subtitle">{product.brand} {product.jaName}</span>
+                  <p>{product.why}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
