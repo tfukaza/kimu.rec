@@ -936,32 +936,165 @@ const {
     color: var(--muted);
   }
 
-  .note-list {
-    display: grid;
-    gap: 24px;
-    margin: 18px 0 0;
-    padding: 0;
-    list-style: none;
+  .consideration-copy {
+    --measure: 600px;
+    --rail-offset: calc((var(--measure) / 2) + 24px);
+    background:
+      linear-gradient(var(--line-soft), var(--line-soft))
+        max(0px, calc(50% - var(--rail-offset))) 0 / var(--stroke) 100% no-repeat,
+      linear-gradient(var(--line-soft), var(--line-soft))
+        min(calc(100% - var(--stroke)), calc(50% + var(--rail-offset))) 0 / var(--stroke)
+        100% no-repeat;
+    text-align: center;
   }
 
-  .note-list li {
+  .consideration-copy > h2 {
+    position: relative;
+    max-width: 940px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: clamp(2.6rem, 6vw, 5.75rem);
+    line-height: 0.92;
+  }
+
+  .consideration-copy :where(h2, h3) {
+    position: relative;
+    z-index: 0;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .consideration-copy :where(h2, h3)::before {
+    content: "";
+    position: absolute;
+    left: 8px;
+    right: -8px;
+    top: 0.34em;
+    bottom: 0.06em;
+    z-index: -1;
+    background: var(--lime);
+  }
+
+  .prose {
+    position: relative;
     display: grid;
-    grid-template-columns: 42px minmax(0, 1fr);
-    gap: 14px;
-    align-items: center;
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, calc(var(--measure) / 2))
+      minmax(0, calc(var(--measure) / 2))
+      minmax(0, 1fr);
+    width: 100%;
+    max-width: none;
+    margin-top: 18px;
+    margin-left: 0;
+    margin-right: 0;
     padding: 0;
-    background: transparent;
+    color: var(--text);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    text-align: left;
+  }
+
+  .prose > * {
+    grid-column: 2 / 4;
+    min-width: 0;
+  }
+
+  .prose p {
+    margin: 0;
+  }
+
+  .prose h2 {
+    margin: 30px 0 10px;
+    font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(1.35rem, 2vw, 1.8rem);
+    font-weight: 800;
+    line-height: 1.2;
+    text-transform: none;
+  }
+
+  .prose h3 {
+    margin: 24px 0 8px;
+    font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+    font-weight: 800;
+    line-height: 1.25;
+    text-transform: none;
+  }
+
+  .prose p + p {
+    margin-top: 18px;
+  }
+
+  .prose ul {
+    margin: 14px 0 0;
+    padding-left: 20px;
+  }
+
+  .prose li + li {
+    margin-top: 8px;
+  }
+
+  .consideration-topic {
+    margin-top: 34px;
+  }
+
+  .consideration-topic h3 {
+    margin-top: 0;
+  }
+
+  .consideration-topic > p {
+    color: var(--muted);
+  }
+
+  .consideration-point-list {
+    display: grid;
+    gap: 0;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    border-top: var(--card-stroke) solid var(--text);
+    border-left: var(--card-stroke) solid var(--text);
+  }
+
+  .consideration-point-list li {
+    margin: 0;
+    padding: 16px 18px;
+    background: var(--surface);
+    border-right: var(--card-stroke) solid var(--text);
+    border-bottom: var(--card-stroke) solid var(--text);
     color: var(--text);
     line-height: 1.55;
   }
 
-  .note-list .material-symbols-outlined {
-    color: var(--text);
-    font-size: 2rem;
+  .consideration-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    max-width: none;
+    margin: 28px 0 0;
+    border-top: var(--card-stroke) solid var(--text);
+    border-left: var(--card-stroke) solid var(--text);
+    text-align: left;
   }
 
-  .note-list li:last-child {
-    padding-bottom: 0;
+  .prose > :where(.consideration-card-grid, figure, picture, img, video, table, pre, .full-bleed) {
+    grid-column: 1 / -1;
+  }
+
+  .consideration-card {
+    padding: 20px;
+    background: var(--surface);
+    border-right: var(--card-stroke) solid var(--text);
+    border-bottom: var(--card-stroke) solid var(--text);
+  }
+
+  .consideration-card h3 {
+    margin-top: 0;
+  }
+
+  .consideration-card p {
+    color: var(--muted);
   }
 
   .empty-state {
@@ -991,13 +1124,6 @@ const {
     text-transform: none;
     white-space: nowrap;
     word-wrap: normal;
-  }
-
-  @media (min-width: 761px) {
-    .note-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      column-gap: clamp(28px, 5vw, 72px);
-    }
   }
 
   @media (max-width: 760px) {
@@ -1059,6 +1185,10 @@ const {
     .recommendation > div:last-child {
       border-top: var(--stroke) solid var(--line);
       border-left: 0;
+    }
+
+    .consideration-card-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

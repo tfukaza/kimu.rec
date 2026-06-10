@@ -1,14 +1,18 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { categories, getCategory } from "@/data/recommendations";
+import { getCollection } from "astro:content";
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
   return categories.map((category) => ({
     params: { category: category.slug },
   }));
 }
 
 const category = getCategory(Astro.params.category ?? "");
+const items = (await getCollection("recommendations"))
+  .filter((entry) => entry.data.category === category?.slug)
+  .sort((a, b) => a.data.order - b.data.order || a.data.name.localeCompare(b.data.name));
 
 if (!category) {
   return Astro.redirect("/");
@@ -43,17 +47,16 @@ if (!category) {
       <h2 id="items-title">Items</h2>
       <span class="jp-subtitle">アイテム</span>
       {
-        category.items.length > 0 ? (
+        items.length > 0 ? (
           <div class="grid">
-            {category.items.map((item) => (
-              <a class="card" href={`/category/${category.slug}/${item.slug}`}>
+            {items.map((item) => (
+              <a class="card" href={`/category/${item.data.category}/${item.data.slug}`}>
                 <div class="card-media" aria-hidden="true">
-                  <span class="material-symbols-outlined">{item.icon}</span>
+                  <span class="material-symbols-outlined">{item.data.icon}</span>
                 </div>
                 <div class="card-copy">
-                  <h3>{item.name}</h3>
-                  <span class="jp-subtitle">{item.jaName}</span>
-                  <p>{item.description}</p>
+                  <h3>{item.data.name}</h3>
+                  <span class="jp-subtitle">{item.data.jaName}</span>
                 </div>
               </a>
             ))}

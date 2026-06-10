@@ -1,29 +1,32 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { categories, getCategory, getItem } from "@/data/recommendations";
+import { getCategory } from "@/data/recommendations";
+import { getCollection, render } from "astro:content";
 
-export function getStaticPaths() {
-  return categories.flatMap((category) =>
-    category.items.map((item) => ({
-      params: { category: category.slug, item: item.slug },
-    })),
-  );
+export async function getStaticPaths() {
+  const items = await getCollection("recommendations");
+
+  return items.map((entry) => ({
+    params: { category: entry.data.category, item: entry.data.slug },
+    props: { entry },
+  }));
 }
 
-const category = getCategory(Astro.params.category ?? "");
-const item = getItem(Astro.params.category ?? "", Astro.params.item ?? "");
+const { entry } = Astro.props;
+const item = entry.data;
+const category = getCategory(item.category);
+const { Content } = await render(entry);
 
-if (!category || !item) {
+if (!category) {
   return Astro.redirect("/");
 }
 
 const topPick = item.topPick;
-const considerationIcons = ["rule", "tune", "view_in_ar", "settings", "construction"];
 ---
 
 <BaseLayout
   title={`${item.name} Recommendation | Kimu.rec`}
-  description={`The most recommended ${item.name.toLowerCase()} pick on Kimu.rec.`}
+  description={`${item.name} recommendation on Kimu.rec.`}
 >
   <div class="page">
     <div class="breadcrumb">
@@ -38,29 +41,7 @@ const considerationIcons = ["rule", "tune", "view_in_ar", "settings", "construct
       <p class="eyebrow">Most recommended</p>
       <h1 id="item-title">{item.name}</h1>
       <span class="jp-subtitle">{item.jaName}</span>
-      <p class="lede">{item.description}</p>
     </section>
-
-    {
-      item.considerations.length > 0 && (
-        <section class="section" aria-labelledby="considerations-title">
-          <h2 id="considerations-title">Things to consider</h2>
-          <span class="jp-subtitle">検討ポイント</span>
-          <ul class="note-list">
-            {item.considerations.map((consideration, index) => (
-              <li>
-                <span class="material-symbols-outlined" aria-hidden="true">
-                  {considerationIcons[index % considerationIcons.length]}
-                </span>
-                <span>{consideration}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )
-    }
-
-    {item.considerations.length > 0 && <div class="divider-stack" aria-hidden="true"></div>}
 
     <section class="section recommendation" aria-labelledby="top-pick-title">
       <div class="recommendation-media">
@@ -79,6 +60,14 @@ const considerationIcons = ["rule", "tune", "view_in_ar", "settings", "construct
         </div>
       </div>
     </section>
+
+    <article class="section consideration-copy" aria-labelledby="considerations-title">
+      <h2 id="considerations-title">Things to consider</h2>
+      <span class="jp-subtitle">検討ポイント</span>
+      <div class="prose">
+        <Content />
+      </div>
+    </article>
 
     {
       item.alternatives.length > 0 && (
