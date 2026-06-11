@@ -22,6 +22,8 @@ if (!category) {
 }
 
 const topPick = item.topPick;
+const isTopPickBundle = "products" in topPick;
+const topPickProducts = isTopPickBundle ? topPick.products : [topPick];
 ---
 
 <BaseLayout
@@ -43,20 +45,68 @@ const topPick = item.topPick;
       <span class="jp-subtitle">{item.jaName}</span>
     </section>
 
-    <section class="section recommendation" aria-labelledby="top-pick-title">
-      <div class="recommendation-media">
-        <img src={topPick.image} alt={`${topPick.brand} ${topPick.name}`} />
+    <section
+      class:list={["section", "recommendation", { "recommendation-bundle": isTopPickBundle }]}
+      aria-labelledby="top-pick-title"
+    >
+      <div class:list={["recommendation-media", { "bundle-media": isTopPickBundle }]}>
+        {
+          topPickProducts.map((product, index) => (
+            <img
+              class={isTopPickBundle ? "bundle-product-image" : undefined}
+              src={product.image}
+              alt={`${product.brand} ${product.name}`}
+              style={isTopPickBundle ? `--bundle-index: ${index}` : undefined}
+            />
+          ))
+        }
       </div>
       <div>
-        <p class="eyebrow">Top pick</p>
-        <h2 id="top-pick-title">{topPick.brand} {topPick.name}</h2>
-        <span class="jp-subtitle">{topPick.brand} {topPick.jaName}</span>
+        <p class="eyebrow">{isTopPickBundle ? "Top picks" : "Top pick"}</p>
+        {
+          isTopPickBundle ? (
+            <>
+              <div id="top-pick-title" class="bundle-product-names" aria-label="Recommended product pair">
+                {topPickProducts.map((product, index) => (
+                  <>
+                    {index > 0 && <span class="bundle-plus" aria-hidden="true">+</span>}
+                    <div class="bundle-product-name">
+                      <h2>{product.brand} {product.name}</h2>
+                      <span class="jp-subtitle">{product.jaName}</span>
+                    </div>
+                  </>
+                ))}
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 id="top-pick-title">{topPick.brand} {topPick.name}</h2>
+              <span class="jp-subtitle">{topPick.brand} {topPick.jaName}</span>
+            </>
+          )
+        }
         <p class="muted">{topPick.why}</p>
+        {
+          isTopPickBundle && (
+            <div class="bundle-reasons">
+              {topPickProducts.map((product) => (
+                <div>
+                  <h3>{product.brand}</h3>
+                  <p>{product.why}</p>
+                </div>
+              ))}
+            </div>
+          )
+        }
         <div class="action-row">
-          <a class="button" href={topPick.url} target="_blank" rel="noreferrer">
-            <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>
-            View recommendation
-          </a>
+          {
+            topPickProducts.map((product) => (
+              <a class="button" href={product.url} target="_blank" rel="noreferrer">
+                <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>
+                {isTopPickBundle ? product.brand : "View recommendation"}
+              </a>
+            ))
+          }
         </div>
       </div>
     </section>

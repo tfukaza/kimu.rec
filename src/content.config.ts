@@ -13,6 +13,14 @@ const productSchema = z.object({
   highlights: z.array(z.string()).default([]),
 });
 
+const productBundleSchema = z.object({
+  name: z.string(),
+  jaName: z.string(),
+  icon: z.string(),
+  why: z.string(),
+  products: z.array(productSchema).min(2),
+});
+
 const recommendations = defineCollection({
   loader: glob({
     pattern: "**/*.mdx",
@@ -25,7 +33,7 @@ const recommendations = defineCollection({
     jaName: z.string(),
     icon: z.string(),
     order: z.number().default(999),
-    topPick: productSchema,
+    topPick: z.union([productSchema, productBundleSchema]),
     alternatives: z.array(productSchema).default([]),
   }),
 });

@@ -4,47 +4,57 @@ import { categories, sourcePage } from "@/data/recommendations";
 ---
 
 <BaseLayout
-  title="Kimu.rec | Product Recommendations"
-  description="Browse random product recommendations by category."
+    title="Kimu.rec | Product Recommendations"
+    description="Browse random product recommendations by category."
 >
-  <div class="page">
-    <section class="hero hero-centered" aria-labelledby="page-title">
-      <div>
-        <p class="eyebrow">Product recommendations</p>
-        <h1 id="page-title">A simple index of things worth buying.</h1>
-        <span class="jp-subtitle">買う価値のあるもののシンプルな索引</span>
-        <p class="lede">
-          Browse categories, pick an item, and see the current top recommendation with practical
-          notes from the starter IRL Meta dataset.
-        </p>
-        <div class="action-row">
-          <a class="button" href={sourcePage.url} target="_blank" rel="noreferrer">
-            <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>
-            View source
-          </a>
-        </div>
-      </div>
-    </section>
+    <div class="page">
+        <section class="hero hero-centered" aria-labelledby="page-title">
+            <div>
+                <h1 id="page-title">
+                    Unapolo- <br />getically Opinionated Product Recs
+                </h1>
+                <span class="jp-subtitle">独善と偏見のイチオシ商品紹介</span>
+                <p class="lede">Trust us, it's good.</p>
+                <div class="action-row">
+                    <a
+                        class="button"
+                        href={sourcePage.url}
+                        target="_blank"
+                        rel="noreferrer"
+                    >
+                        <span
+                            class="material-symbols-outlined"
+                            aria-hidden="true">open_in_new</span
+                        >
+                        View source
+                    </a>
+                </div>
+            </div>
+        </section>
 
-    <section class="section" aria-labelledby="categories-title">
-      <h2 id="categories-title">Categories</h2>
-      <span class="jp-subtitle">カテゴリー</span>
-      <div class="grid">
-        {
-          categories.map((category) => (
-            <a class="card" href={`/category/${category.slug}`}>
-              <div class="card-media" aria-hidden="true">
-                <span class="material-symbols-outlined">{category.icon}</span>
-              </div>
-              <div class="card-copy">
-                <h3>{category.name}</h3>
-                <span class="jp-subtitle">{category.jaName}</span>
-                <p>{category.description}</p>
-              </div>
-            </a>
-          ))
-        }
-      </div>
-    </section>
-  </div>
+        <section class="section" aria-labelledby="categories-title">
+            <h2 id="categories-title">Categories</h2>
+            <span class="jp-subtitle">カテゴリー</span>
+            <div class="grid">
+                {
+                    categories.map((category) => (
+                        <a class="card" href={`/category/${category.slug}`}>
+                            <div class="card-media" aria-hidden="true">
+                                <span class="material-symbols-outlined">
+                                    {category.icon}
+                                </span>
+                            </div>
+                            <div class="card-copy">
+                                <h3>{category.name}</h3>
+                                <span class="jp-subtitle">
+                                    {category.jaName}
+                                </span>
+                                <p>{category.description}</p>
+                            </div>
+                        </a>
+                    ))
+                }
+            </div>
+        </section>
+    </div>
 </BaseLayout>

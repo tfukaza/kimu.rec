@@ -54,6 +54,13 @@ export const categories: Category[] = [
     description: "A source category reserved for future furniture recommendations.",
     icon: "chair",
   },
+  {
+    slug: "lifetyle",
+    name: "Lifetyle",
+    jaName: "ライフスタイル",
+    description: "People, places, and broader lifestyle recommendations.",
+    icon: "interests",
+  },
 ];
 
 export function getCategory(slug: string) {

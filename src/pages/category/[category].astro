@@ -48,7 +48,7 @@ if (!category) {
       <span class="jp-subtitle">アイテム</span>
       {
         items.length > 0 ? (
-          <div class="grid">
+          <div class="grid item-grid">
             {items.map((item) => (
               <a class="card" href={`/category/${item.data.category}/${item.data.slug}`}>
                 <div class="card-media" aria-hidden="true">

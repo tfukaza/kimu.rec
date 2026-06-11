@@ -61,6 +61,36 @@ const {
         </div>
       </div>
     </footer>
+    <script is:inline>
+      const enhanceProseLinks = () => {
+        const links = document.querySelectorAll(".prose a[href^='http://'], .prose a[href^='https://']");
+
+        links.forEach((link) => {
+          if (link.querySelector(".link-favicon")) {
+            return;
+          }
+
+          const favicon = document.createElement("img");
+          const url = new URL(link.href);
+
+          favicon.className = "link-favicon";
+          favicon.src = `https://www.google.com/s2/favicons?domain=${url.hostname}&sz=32`;
+          favicon.alt = "";
+          favicon.loading = "lazy";
+          favicon.decoding = "async";
+          favicon.setAttribute("aria-hidden", "true");
+          favicon.addEventListener("error", () => favicon.remove(), { once: true });
+
+          link.prepend(favicon);
+        });
+      };
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", enhanceProseLinks, { once: true });
+      } else {
+        enhanceProseLinks();
+      }
+    </script>
   </body>
 </html>
 
@@ -77,6 +107,7 @@ const {
     --surface: #ffffff;
     --text: #111111;
     --muted: #414141;
+    --subtitle: #9a9a9a;
     --line: #d8d8d8;
     --line-soft: #d8d8d8;
     --blue: #39b1d1;
@@ -429,7 +460,7 @@ const {
   .jp-subtitle {
     display: block;
     margin: 0 0 12px;
-    color: var(--muted);
+    color: var(--subtitle);
     font-family: "Fusion Pixel 8px", "Geist", sans-serif;
     font-size: 1rem;
     font-weight: 400;
@@ -613,6 +644,12 @@ const {
     gap: 0;
     border-top: var(--card-stroke) solid var(--text);
     border-left: var(--card-stroke) solid var(--text);
+  }
+
+  @media (min-width: 761px) {
+    .item-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
 
   .card {
@@ -914,6 +951,88 @@ const {
     object-fit: cover;
   }
 
+  .recommendation-bundle {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  }
+
+  .bundle-media {
+    display: grid;
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    min-height: clamp(360px, 42vw, 520px);
+    padding: 0;
+  }
+
+  .recommendation-media .bundle-product-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    padding: clamp(12px, 2vw, 22px);
+    background: var(--surface);
+    border: 0;
+    object-fit: contain;
+  }
+
+  .bundle-product-image:nth-child(1) {
+    border-bottom: var(--stroke) solid var(--line);
+  }
+
+  .bundle-product-names {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+
+  .bundle-product-name h2 {
+    margin-bottom: 2px;
+    font-size: clamp(1.35rem, 2.2vw, 2.25rem);
+    line-height: 1.02;
+  }
+
+  .bundle-plus {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 2px 0 6px;
+    background: var(--orange);
+    border: var(--control-stroke) solid var(--text);
+    font-family: "Bitcount Grid Single", "Geist", monospace;
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+
+  .bundle-reasons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    margin-top: 22px;
+    border-top: var(--stroke) solid var(--line);
+    border-left: var(--stroke) solid var(--line);
+  }
+
+  .bundle-reasons > div {
+    min-width: 0;
+    padding: 14px;
+    border-right: var(--stroke) solid var(--line);
+    border-bottom: var(--stroke) solid var(--line);
+  }
+
+  .bundle-reasons h3 {
+    margin-bottom: 8px;
+    color: var(--red);
+    font-size: 1rem;
+  }
+
+  .bundle-reasons p {
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+
   .product-card-media {
     padding: 24px;
   }
@@ -1004,6 +1123,42 @@ const {
     margin: 0;
   }
 
+  .prose a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.22em;
+    color: var(--text);
+    font-weight: 800;
+    text-decoration: none;
+    background:
+      linear-gradient(var(--lime), var(--lime)) 0 88% / 100% 0.38em no-repeat;
+  }
+
+  .prose a:hover {
+    background-size: 100% 0.72em;
+  }
+
+  .prose a[href^="http://"]::after,
+  .prose a[href^="https://"]::after {
+    content: "open_in_new";
+    display: inline-block;
+    font-family: "Material Symbols Outlined";
+    font-size: 0.95em;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1;
+    text-transform: none;
+    transform: translateY(0.08em);
+  }
+
+  .prose a .link-favicon {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 1em;
+    height: 1em;
+    object-fit: contain;
+  }
+
   .prose h2 {
     margin: 30px 0 10px;
     font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
@@ -1026,13 +1181,21 @@ const {
     margin-top: 18px;
   }
 
-  .prose ul {
-    margin: 14px 0 0;
+  .prose :where(ul, ol) {
+    margin: 14px 0 18px;
     padding-left: 20px;
+  }
+
+  .prose li {
+    margin-bottom: 8px;
   }
 
   .prose li + li {
     margin-top: 8px;
+  }
+
+  .prose li:last-child {
+    margin-bottom: 0;
   }
 
   .consideration-topic {
@@ -1185,6 +1348,15 @@ const {
     .recommendation > div:last-child {
       border-top: var(--stroke) solid var(--line);
       border-left: 0;
+    }
+
+    .bundle-media {
+      grid-template-rows: 1fr 1fr;
+      min-height: clamp(220px, 68vw, 300px);
+    }
+
+    .bundle-reasons {
+      grid-template-columns: 1fr;
     }
 
     .consideration-card-grid {
