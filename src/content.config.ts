@@ -35,6 +35,7 @@ const recommendations = defineCollection({
     order: z.number().default(999),
     topPick: z.union([productSchema, productBundleSchema]),
     alternatives: z.array(productSchema).default([]),
+    tryToAvoid: z.array(productSchema).default([]),
   }),
 });
 

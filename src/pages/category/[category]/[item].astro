@@ -143,5 +143,30 @@ const topPickProducts = isTopPickBundle ? topPick.products : [topPick];
         </section>
       )
     }
+
+    {
+      item.tryToAvoid.length > 0 && (
+        <section class="section avoid-section" aria-labelledby="avoid-title">
+          <h2 id="avoid-title">Try to avoid</h2>
+          <span class="jp-subtitle">おすすめしない候補</span>
+          <div class="grid product-grid">
+            {item.tryToAvoid.map((product) => (
+              <a class="card product-card" href={product.url} target="_blank" rel="noreferrer">
+                <div class="card-media product-card-media">
+                  <img src={product.image} alt={`${product.brand} ${product.name}`} />
+                </div>
+                <div class="card-copy">
+                  <h3>
+                    {product.brand} {product.name}
+                  </h3>
+                  <span class="jp-subtitle">{product.brand} {product.jaName}</span>
+                  <p>{product.why}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
   </div>
 </BaseLayout>
